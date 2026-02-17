@@ -1,0 +1,21 @@
+<div class="todo-list-container">
+    <h1>Todo List</h1>
+
+    <div *ngIf="todos && todos.length > 0; else noTodos" class="todos">
+        <div *ngFor="let todo of todos" class="todo-item">
+            <div class="todo-header">
+                <h3>{{ todo.body }}</h3>
+                <span class="status" [ngClass]="'status-' + todo.status">{{ todo.status }}</span>
+            </div>
+
+            <div class="todo-details">
+                <p><strong>Owner:</strong> {{ todo.owner }}</p>
+                <p><strong>Category:</strong> {{ todo.category }}</p>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #noTodos>
+        <p class="no-todos">No todos found.</p>
+    </ng-template>
+</div>
