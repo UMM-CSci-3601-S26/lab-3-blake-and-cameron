@@ -5,3 +5,5 @@ export interface Todo {
   body: string;
   category: string;
 }
+
+export type todoCategory = 'video games' | 'software design' | 'groceries' | 'homework';
