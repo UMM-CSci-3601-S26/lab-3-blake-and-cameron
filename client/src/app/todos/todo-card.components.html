@@ -2,7 +2,7 @@
   <mat-card class="todo-card">
     <mat-card-header>
 
-      <mat-card-title class="todo-card-_id">{{ todo()._id }}</mat-card-title>
+      <mat-card-title class="todo-card-owner">{{ todo().owner }}</mat-card-title>
       <mat-card-subtitle class="todo-card-category">{{ todo().category }}</mat-card-subtitle>
     </mat-card-header>
     @if (!simple()) {

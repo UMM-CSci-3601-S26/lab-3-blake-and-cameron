@@ -72,7 +72,7 @@
       <!-- Card grid view -->
       @case ('card') {
       <div class="todo-cards-container flex-row gap-8 flex-wrap">
-        @for (todo of filteredTodos(); track todo._id) {
+        @for (todo of filteredTodos(); track todo.owner) {
         <app-todo-card [simple]="true" class="todo-card" [todo]="todo"></app-todo-card>
         }
       </div>
@@ -83,15 +83,6 @@
         <mat-card-content>
           <mat-nav-list class="todo-nav-list">
             <h3 mat-subheader>Todos</h3>
-            @for (todo of filteredTodos(); track todo._id) {
-            <a mat-list-item [routerLink]="['/todos', todo._id]" class="todo-list-item">
-              @if (todo.avatar) {
-              <img matListItemAvatar [src]="todo.avatar" alt="Avatar for {{ todo.name }}">
-              }
-              <span matListItemTitle mat-line class="todo-list-name"> {{todo.name}} </span>
-              <span matListItemLine class="todo-list-role"> {{todo.category}} </span>
-            </a>
-            }
           </mat-nav-list>
         </mat-card-content>
       </mat-card>
