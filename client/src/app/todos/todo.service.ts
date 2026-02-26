@@ -31,6 +31,7 @@ export class TodoService {
   private readonly statusKey = 'status';
   private readonly bodyKey = 'body';
   private readonly categoryKey = 'category';
+  private readonly limitKey = 'limit';
 
 
   /**
@@ -50,7 +51,7 @@ export class TodoService {
    *  from the server after a possibly substantial delay (because we're
    *  contacting a remote server over the Internet).
    */
-  getTodos(filters?: { owner?:  string; status?: boolean; body?: string; category?: string }): Observable<Todo[]> {
+  getTodos(filters?: { owner?:  string; status?: boolean; body?: string; category?: string; limit?: number; }): Observable<Todo[]> {
     // `HttpParams` is essentially just a map used to hold key-value
     // pairs that are then encoded as "?key1=value1&key2=value2&…" in
     // the URL when we make the call to `.get()` below.
@@ -59,8 +60,9 @@ export class TodoService {
       if (filters.owner) {
         httpParams = httpParams.set(this.ownerKey, filters.owner);
       }
-      if (filters.status) {
-        httpParams = httpParams.set(this.statusKey, filters.status.toString());
+      if (filters.status !== undefined) {
+        const statusParam = filters.status ? 'complete' : 'incomplete';
+        httpParams = httpParams.set(this.statusKey, statusParam);
       }
       if (filters.body) {
         httpParams = httpParams.set(this.bodyKey, filters.body);
@@ -68,11 +70,14 @@ export class TodoService {
       if (filters.category) {
         httpParams = httpParams.set(this.categoryKey, filters.category);
       }
+      if (filters.limit) {
+        httpParams = httpParams.set(this.limitKey, String(filters.limit));
+      }
     }
     // Send the HTTP GET request with the given URL and parameters.
     // That will return the desired `Observable<User[]>`.
     return this.httpClient.get<Todo[]>(this.todoUrl, {
-      params: httpParams,
+      params: httpParams
     });
   }
 
@@ -100,7 +105,7 @@ export class TodoService {
    * @param filters the map of key-value pairs used for the filtering
    * @returns an array of `Users` matching the given filters
    */
-  filterTodo(todos: Todo[], filters: { owner?: string; category?: string }): Todo[] { // skipcq: JS-0105
+  filterTodo(todos: Todo[], filters: { owner?: string; category?: string}): Todo[] { // skipcq: JS-0105
     let filteredTodos = todos;
 
     // Filter by.owner

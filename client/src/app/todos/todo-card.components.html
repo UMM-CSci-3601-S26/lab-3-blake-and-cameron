@@ -21,21 +21,22 @@
           <mat-list-item>
             <mat-icon matListItemIcon>schedule</mat-icon>
             <p matListItemTitle>Status</p>
-            <p matListItemLine class="todo-card-status">{{ todo().status }}</p>
+            <p matListItemLine class="todo-card-status">{{ todo().status ? 'Completed' : 'Incomplete' }}</p>
           </mat-list-item>
+
           <mat-divider [inset]=true></mat-divider>
+
           <mat-list-item>
-            <a href="mailto:{{todo().body}}"  matListItemIcon><mat-icon>cloud</mat-icon></a>
+            <mat-icon matListItemIcon>notes</mat-icon>
             <p matListItemTitle>Body</p>
-            <a matListItemLine class="todo-card-body" href="mailto:{{todo().body}}">{{todo().body}}</a>
-            <a href="mailto:{{todo().body}}" matListItemMeta mat-icon-button><mat-icon>open_in_new</mat-icon></a>
+            <p matListItemLine class="todo-card-body">{{ todo().body }}</p>
           </mat-list-item>
         </mat-list>
       </mat-card-content>
     }
     @if (simple()) {
       <mat-card-actions>
-        <button mat-button data-test="viewProfileButton" [routerLink]="['/todos', todo()._id]">View Profile</button>
+        <a mat-button data-test="viewProfileButton" [routerLink]="['/todos', todo()._id]">View Todo</a>
       </mat-card-actions>
     }
   </mat-card>

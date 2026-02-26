@@ -8,6 +8,7 @@ import { Todo } from './todo';
 
 @Component({
   selector: 'app-todo-card',
+  standalone: true,
   templateUrl: './todo-card.components.html',
   styleUrls: ['./todo-card.components.scss'],
   imports: [MatCardModule, MatButtonModule, MatListModule, MatIconModule, RouterLink]

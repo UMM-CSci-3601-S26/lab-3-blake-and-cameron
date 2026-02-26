@@ -1,9 +1,9 @@
 export interface Todo {
   _id: string;
   owner: string;
-  status: number;
+  status: boolean;
   body: string;
-  category: string;
+  category: todoCategory;
 }
 
 export type todoCategory = 'video games' | 'software design' | 'groceries' | 'homework';

@@ -20,6 +20,7 @@ import { TodoService } from './todo.service';
 
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
+
 @Component({
   selector: 'app-todo-list-component',
   standalone: true,
@@ -51,6 +52,7 @@ export class TodoListComponent {
   todoCategory = signal<todoCategory | undefined>(undefined);
   todoStatus = signal<boolean | undefined>(undefined);
   todoBody = signal<string | undefined>(undefined);
+  todoLimit = signal<number | undefined>(undefined);
 
   viewType = signal<'card' | 'list'>('card');
 
@@ -58,20 +60,24 @@ export class TodoListComponent {
 
   private todoCategory$ = toObservable(this.todoCategory);
   private todoStatus$ = toObservable(this.todoStatus);
+  private todoLimit$ = toObservable(this.todoLimit);
+  private todoBody$ = toObservable(this.todoBody);
 
   serverFilteredTodos = toSignal(
-    combineLatest([this.todoCategory$, this.todoStatus$]).pipe(
-      switchMap(([category, status]) =>
+    combineLatest([this.todoCategory$, this.todoStatus$, this.todoLimit$, this.todoBody$]).pipe(
+      switchMap(([category, status, limit, body]) =>
         this.todoService.getTodos({
           category,
           status,
+          limit,
+          body
         })
       ),
 
       catchError((err) => {
         if (!(err.error instanceof ErrorEvent)) {
           this.errMsg.set(
-            `Problem contacting the server – Error Code: ${err.status}\nMessage: ${err.message}`
+            `Problem contacting the server - Error Code: ${err.status}\nMessage: ${err.message}`
           );
         }
 
@@ -90,9 +96,6 @@ export class TodoListComponent {
   filteredTodos = computed(() => {
     const serverFilteredTodos = this.serverFilteredTodos();
 
-    return this.todoService.filterTodo(serverFilteredTodos, {
-      owner: this.todoOwner(),
-      category: this.todoCategory(),
-    });
+    return this.todoService.filterTodo(serverFilteredTodos, {owner: this.todoOwner()});
   });
 }
