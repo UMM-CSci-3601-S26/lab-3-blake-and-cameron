@@ -1,7 +1,7 @@
 <div class="flex-row">
   <div class="flex-1">
-    @if (user()) {
-    <app-user-card [user]="user()!"></app-user-card>
+    @if (todo()) {
+    <app-todo-card [todo]="todo()!"></app-todo-card>
     } @else if (error().help !== '') {
     <mat-card class="error-card">
       <mat-card-content>
@@ -16,15 +16,15 @@
         </p>
       </mat-card-content>
       <mat-card-actions>
-        <button color="primary" mat-raised-button routerLink="/users">
-          Back to Users List
+        <button color="primary" mat-raised-button routerLink="/todos">
+          Back to Todos List
         </button>
       </mat-card-actions>
     </mat-card>
     } @else {
     <mat-card>
       <mat-card-content>
-        <p>Loading User Profile data...</p>
+        <p>Loading Todo Profile data...</p>
       </mat-card-content>
     </mat-card>
     }

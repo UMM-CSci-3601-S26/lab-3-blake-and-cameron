@@ -19,31 +19,42 @@
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
 
-          <mat-form-field class="input-field">
-            <mat-label>Category</mat-label>
-            <input matInput data-test="todoCategoryInput" placeholder="Filter by category" [(ngModel)]="todoCategory">
-            <mat-hint>Filtered on client</mat-hint>
-          </mat-form-field>
         </div>
 
         <div class="flex-row gap-8 flex-wrap">
           <!-- Examples of filtering on the server -->
 
           <mat-form-field class="input-field">
-            <mat-label>Status</mat-label>
-            <input matInput data-test="todoStatusInput" type="number" placeholder="Filter by status" min="0" max="200"
-              [(ngModel)]="todoStatus">
+            <mat-label>Limit</mat-label>
+            <input matInput data-test="todoLimitInput" type="number" placeholder="Filter by limit" min="0" max="200"
+              [(ngModel)]="todoLimit">
             <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
 
           <mat-form-field class="input-field">
-            <mat-label>category</mat-label>
+            <mat-label>Status</mat-label>
+            <mat-select [(ngModel)]="todoStatus" data-test="todoStatusSelect">
+              <mat-option [value]="undefined"> -- </mat-option>
+              <mat-option [value]="true">Completed</mat-option>
+              <mat-option [value]="false">Incomplete</mat-option>
+            </mat-select>
+            <mat-hint>Filtered on server</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Body</mat-label>
+            <input matInput data-test="todoBodyInput" placeholder="Filter by body" [(ngModel)]="todoBody">
+            <mat-hint>Filtered on server</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Category</mat-label>
             <mat-select [(ngModel)]="todoCategory" data-test="todoCategorySelect">
-              <mat-option>--</mat-option>
-              <mat-option value="admin">video games</mat-option>
-              <mat-option value="editor">software design</mat-option>
-              <mat-option value="viewer">homework</mat-option>
-              <mat-option value="viewer">groceries</mat-option>
+              <mat-option [value]="undefined">--</mat-option>
+              <mat-option value="video games">video games</mat-option>
+              <mat-option value="software design">software design</mat-option>
+              <mat-option value="homework">homework</mat-option>
+              <mat-option value="groceries">groceries</mat-option>
             </mat-select>
             <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
@@ -72,7 +83,7 @@
       <!-- Card grid view -->
       @case ('card') {
       <div class="todo-cards-container flex-row gap-8 flex-wrap">
-        @for (todo of filteredTodos(); track todo.owner) {
+        @for (todo of filteredTodos(); track todo._id) {
         <app-todo-card [simple]="true" class="todo-card" [todo]="todo"></app-todo-card>
         }
       </div>
@@ -83,6 +94,12 @@
         <mat-card-content>
           <mat-nav-list class="todo-nav-list">
             <h3 mat-subheader>Todos</h3>
+            @for (todo of filteredTodos(); track todo._id) {
+              <a mat-list-item data-test="todoListItem" [routerLink]="['/todos', todo._id]">
+                <span matListItemTitle> {{ todo.owner }} {{ todo.category }}  </span>
+                <span matListItemLine> {{ todo.body }}</span>
+              </a>
+            }
           </mat-nav-list>
         </mat-card-content>
       </mat-card>
