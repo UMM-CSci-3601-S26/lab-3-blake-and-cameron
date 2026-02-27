@@ -58,6 +58,26 @@
             </mat-select>
             <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Sort By</mat-label>
+            <mat-select [(ngModel)]="todoSortBy" data-test="todoSortBySelect">
+              <mat-option [value]="undefined">--</mat-option>
+              <mat-option value="owner">owner</mat-option>
+              <mat-option value="status">status</mat-option>
+              <mat-option value="body">body</mat-option>
+              <mat-option value="category">category</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Sort Order</mat-label>
+              <mat-select [(ngModel)]="todoSortOrder" data-test="todoSortOrderSelect">
+                <mat-option [value]="undefined">--</mat-option>
+                <mat-option value="asc">asc</mat-option>
+                <mat-option value="desc">desc</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         <br>
