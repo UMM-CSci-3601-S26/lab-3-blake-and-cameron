@@ -9,6 +9,10 @@ export class TodoListPage {
   private readonly limitInputSelector = '[data-test=todoLimitInput]';
   private readonly viewTodoButtonSelector = '[data-test=viewProfileButton]';
   private readonly addTodoButtonSelector = '[data-test=addTodoButton]';
+  private readonly statusSelectSelector = '[data-test=todoStatusSelect]';
+  private readonly bodyInputSelector = '[data-test=todoBodyInput]';
+  private readonly categorySelectSelector = '[data-test=todoCategorySelect]';
+  private readonly dropdownOptionSelector = 'mat-option';
 
   navigateTo() {
     return cy.visit(this.baseUrl);
@@ -36,6 +40,27 @@ export class TodoListPage {
 
   typeLimit(value: number) {
     return cy.get(this.limitInputSelector).clear().type(String(value));
+  }
+
+  typeBody(value: string) {
+    return cy.get(this.bodyInputSelector).clear().type(value);
+  }
+
+  selectStatus(value: boolean | undefined) {
+    cy.get(this.statusSelectSelector).click();
+    if (value === undefined) {
+      return cy.get(this.dropdownOptionSelector).contains('--').click();
+    }
+    const label = value ? 'Complete' : 'Incomplete';
+    return cy.get('mat-option').contains(label).click();
+  }
+
+  selectCategory(value: string | undefined) {
+    cy.get(this.categorySelectSelector).click();
+    if (value === undefined) {
+      return cy.get(this.dropdownOptionSelector).contains('--').click();
+    }
+    return cy.get(`${this.dropdownOptionSelector}[value="${value}"]`).click();
   }
 
   clickViewTodo(card: Cypress.Chainable<JQuery<HTMLElement>>) {
