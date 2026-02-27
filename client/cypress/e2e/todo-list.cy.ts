@@ -2,6 +2,22 @@ import { TodoListPage } from '../support/todo-list.po';
 
 const page = new TodoListPage();
 
+function assertAllOwnersMatch(ownerSubstr: string) {
+  cy.get('.todo-card-owner').each(($el) => {
+    cy.wrap($el).invoke('text').then((text) => {
+      expect(text.toLowerCase()).to.contain(ownerSubstr.toLowerCase());
+    });
+  });
+}
+
+function assertAllStatusesMatch(label: 'Completed' | 'Incomplete') {
+  cy.get('.todo-card-status').each(($el) => {
+    cy.wrap($el).invoke('text').then((text) => {
+      expect(text.toLowerCase()).to.contain(label.toLowerCase());
+    });
+  });
+}
+
 describe('Todo list', () => {
 
   beforeEach(() => {
@@ -59,17 +75,36 @@ describe('Todo list', () => {
       page.clickViewTodo(page.getTodoCards().first());
       cy.get('.todo-card-status').should('contain.text', 'Incomplete');
     });
-
-    it('Should sort todos by owner ascending', () => {
-      page.changeView('card');
-      page.selectSortBy('owner');
-      page.selectSortOrder('asc');
-
-      cy.get('.todo-card-owner').then(($els) => {
-        const owners = [...$els].map(e => e.textContent?.trim().toLowerCase());
-        const sorted = [...owners].sort();
-        expect(owners).to.deep.equal(sorted);
-      });
-    });
   });
+
+  it('Should sort todos by owner ascending', () => {
+    page.changeView('card');
+    page.selectSortBy('owner');
+    page.selectSortOrder('asc');
+
+    cy.get('.todo-card-owner').then(($els) => {
+      const owners = [...$els].map(e => e.textContent?.trim().toLowerCase());
+      const sorted = [...owners].sort();
+      expect(owners).to.deep.equal(sorted);
+    });
+
+  });
+  it('Should filter completed todos with a limit and the last item is still complete', () => {
+    page.changeView('card');
+    page.selectStatus(true);
+    page.typeLimit(3);
+    page.getTodoCards().should('have.length.at.most', 3);
+    page.clickViewTodo(page.getTodoCards().last());
+    cy.get('.todo-card-status').last().should('contain.text', 'Complete');
+    assertAllStatusesMatch('Completed');
+  });
+
+  it('Should filter by owner and apply limit', () => {
+    page.changeView('card');
+    page.typeOwner('Blanche');
+    page.typeLimit(4);
+    page.getTodoCards().should('have.length.at.most', 4);
+    assertAllOwnersMatch('Blanche');
+  });
+
 });

@@ -66,17 +66,19 @@ export class TodoListComponent {
   private todoBody$ = toObservable(this.todoBody);
   private todoSortBy$ = toObservable(this.todoSortBy);
   private todoSortOrder$ = toObservable(this.todoSortOrder);
+  private todoOwner$ = toObservable(this.todoOwner);
 
   serverFilteredTodos = toSignal(
-    combineLatest([this.todoCategory$, this.todoStatus$, this.todoLimit$, this.todoBody$, this.todoSortBy$, this.todoSortOrder$]).pipe(
-      switchMap(([category, status, limit, body, sortBy, sortOrder]) =>
+    combineLatest([this.todoCategory$, this.todoStatus$, this.todoLimit$, this.todoBody$, this.todoSortBy$, this.todoSortOrder$, this.todoOwner$]).pipe(
+      switchMap(([category, status, limit, body, sortBy, sortOrder, owner]) =>
         this.todoService.getTodos({
           category,
           status,
           limit,
           body,
           sortBy,
-          sortOrder
+          sortOrder,
+          owner
         })
       ),
 
@@ -101,16 +103,15 @@ export class TodoListComponent {
 
   filteredTodos = computed(() => {
     const serverFilteredTodos = this.serverFilteredTodos();
-    const ownerFilter = this.todoService.filterTodo(serverFilteredTodos, {owner: this.todoOwner()});
 
     const sortBy = this.todoSortBy();
     const sortOrder = this.todoSortOrder() ?? 'asc';
 
     if (!sortBy) {
-      return ownerFilter;
+      return serverFilteredTodos;
     }
 
-    const sortedTodos = [...ownerFilter].sort((a, b) => {
+    const sortedTodos = [...serverFilteredTodos].sort((a, b) => {
       const aValue = String(a[sortBy]).toLowerCase();
       const bValue = String(b[sortBy]).toLowerCase();
 
