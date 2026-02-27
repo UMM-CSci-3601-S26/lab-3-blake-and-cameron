@@ -50,4 +50,14 @@ describe('Todo list', () => {
     });
   });
 
+  it('should apply combination of server side filters', () => {
+    page.changeView('card');
+    page.selectStatus(false);
+    page.typeLimit(5);
+    page.getTodoCards().should('have.length.at.most', 5);
+    page.getTodoCards().first().then(() => {
+      page.clickViewTodo(page.getTodoCards().first());
+      cy.get('.todo-card-status').should('contain.text', 'Incomplete');
+    });
+  });
 });
