@@ -117,6 +117,6 @@ export class TodoListComponent {
       return aValue.localeCompare(bValue)
     });
 
-    return sortOrder === 'desc' ? sortedTodos : sortedTodos.reverse();
+    return sortOrder === 'desc' ? sortedTodos.reverse() : sortedTodos;
   });
 }

@@ -59,5 +59,17 @@ describe('Todo list', () => {
       page.clickViewTodo(page.getTodoCards().first());
       cy.get('.todo-card-status').should('contain.text', 'Incomplete');
     });
+
+    it('Should sort todos by owner ascending', () => {
+      page.changeView('card');
+      page.selectSortBy('owner');
+      page.selectSortOrder('asc');
+
+      cy.get('.todo-card-owner').then(($els) => {
+        const owners = [...$els].map(e => e.textContent?.trim().toLowerCase());
+        const sorted = [...owners].sort();
+        expect(owners).to.deep.equal(sorted);
+      });
+    });
   });
 });
