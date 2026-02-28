@@ -1,35 +1,134 @@
-.sidenav-container {
-  height: 100%;
+:host {
+  --bg: #101828;
+  --card: #1e293b;
+  --card-hover: #243244;
+  --primary: #4f46e5;
+  --accent: #22d3ee;
+  --complete: #22c55e;
+  --incomplete: #f97316;
+
+  --text: #f8fafc;
+  --muted: #cbd5e1;
+  --border: rgba(255, 255, 255, 0.08);
+
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0f172a, #101828);
+  color: var(--text);
+
+  font-family: "Inter", "Roboto", sans-serif;
+  letter-spacing: 0.2px;
 }
 
-.sidenav {
-  width: 256px;
+/* Layout */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px 90px;
 }
 
-.sidenav mat-toolbar {
-  background: inherit;
+/* ===== Cards ===== */
+
+mat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+  transition: all 150ms ease;
 }
 
-mat-toolbar.mat-primary {
-  position: sticky;
-  top: 0;
-  z-index: 1;
+mat-card:hover {
+  background: var(--card-hover);
+  transform: translateY(-4px);
 }
 
-.app-title {
-  padding-left: 16px;
+/* Titles */
+mat-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
+/* ===== Lists ===== */
 
-.main-content {
-  margin: auto;
-  padding: 24px;
-  @media (max-width: 599px) {
-    padding: 16px;
-  }
+mat-nav-list {
+  background: var(--card);
+  border-radius: 16px;
+}
 
-  & {
-    // adds padding to the main content container on larger screens (above 1280px wide)
-    max-width: 1280px;
-  }
+mat-list-item {
+  border-bottom: 1px solid var(--border);
+  transition: background 120ms ease;
+}
+
+mat-list-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Remove last border */
+mat-list-item:last-child {
+  border-bottom: none;
+}
+
+/* ===== Typography hierarchy ===== */
+
+.todo-card-owner,
+.user-card-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.todo-card-category {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.todo-card-body {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ===== Status colors ===== */
+
+.todo-card-status {
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+.status-complete {
+  color: var(--complete);
+}
+
+.status-incomplete {
+  color: var(--incomplete);
+}
+
+/* ===== Inputs ===== */
+
+mat-form-field {
+  width: 100%;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  color: var(--muted);
+}
+
+/* ===== Floating Button ===== */
+
+.add-todo-fab,
+.add-user-fab {
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  background-color: var(--primary) !important;
+  color: white !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  transition: transform 150ms ease, background 150ms ease;
+}
+
+.add-todo-fab:hover,
+.add-user-fab:hover {
+  transform: scale(1.1);
+  background-color: var(--accent) !important;
 }

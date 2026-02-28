@@ -1,0 +1,71 @@
+.search-card {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.04),
+    rgba(255,255,255,0.02)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.search-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 45px rgba(0,0,0,0.55);
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+.todo-list-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.input-field {
+  min-width: 240px;
+  flex: 1 1 240px;
+}
+
+.flex-row.gap-8.flex-wrap {
+  padding: 6px 0;
+}
+
+.todo-cards-container {
+  padding-top: 10px;
+}
+
+.todo-card {
+  flex: 1 1 280px;
+  min-width: 280px;
+}
+
+.todo-nav-list {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.todo-nav-list a[mat-list-item] {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.todo-nav-list a[mat-list-item]:hover {
+  background: rgba(99, 102, 241, 0.12);
+}
+
+.todo-nav-list span[matListItemTitle] {
+  font-weight: 700;
+}
+
+.todo-nav-list span[matListItemLine] {
+  color: rgba(203, 213, 225, 0.9);
+}
+
+.add-todo-fab {
+  position: fixed;
+  bottom: 18px;
+  right: 28px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.55);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
