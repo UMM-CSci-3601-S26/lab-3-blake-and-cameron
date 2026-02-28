@@ -1,7 +1,13 @@
 package umm3601.todos;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+// import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 // import static org.mockito.ArgumentMatchers.any;
 // import static org.mockito.ArgumentMatchers.argThat;
 // import static org.mockito.ArgumentMatchers.any;
@@ -40,6 +46,7 @@ import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
+import io.javalin.validation.BodyValidator;
 // import io.javalin.json.JavalinJackson;
 import umm3601.todo.Todo;
 import umm3601.todo.TodoController;
@@ -330,7 +337,7 @@ public class TodoControllerSpec {
   }
 
   @Test
-  public void canSortTodosByOwnerDecending() throws IOException {
+  public void canSortTodosByOwnerDescending() throws IOException {
     when(ctx.queryParam("sortBy")).thenReturn("owner");
     when(ctx.queryParam("sortOrder")).thenReturn("desc");
 
@@ -356,5 +363,97 @@ public class TodoControllerSpec {
     assertEquals("Chris", chris.owner);
     assertEquals(true, chris.status);
   }
+  @Test
+  void canAddNewTodo() throws IOException {
+    Todo newTodo = new Todo();
+    newTodo.owner = "New Owner";
+    newTodo.status = false;
+    newTodo.body = "A brand new todo";
+    newTodo.category = "homework";
+
+    long beforeCount = db.getCollection("todos").countDocuments();
+
+
+    @SuppressWarnings("unchecked")
+    BodyValidator<Todo> validator = (BodyValidator<Todo>) mock(BodyValidator.class);
+
+    when(ctx.body()).thenReturn(
+    "{\"owner\":\"New Owner\",\"status\":false,\"body\":\"A brand new todo\",\"category\":\"homework\"}");
+    when(ctx.bodyValidator(Todo.class)).thenReturn(validator);
+    when(validator.check(any(), anyString())).thenReturn(validator);
+    when(validator.get()).thenReturn(newTodo);
+    todoController.addNewTodo(ctx);
+    verify(ctx).json(mapCaptor.capture());
+    verify(ctx).status(HttpStatus.CREATED);
+
+    Map<String, String> response = mapCaptor.getValue();
+    String id = response.get("id");
+
+    assertNotNull(id);
+    assertTrue(id.matches("^[0-9a-fA-F]{24}$"));
+
+    long afterCount = db.getCollection("todos").countDocuments();
+    assertEquals(beforeCount + 1, afterCount);
+
+    Document inserted = db.getCollection("todos")
+    .find(new Document("_id", new ObjectId(id)))
+    .first();
+    assertNotNull(inserted);
+    assertEquals("New Owner", inserted.getString("owner"));
+    assertEquals(false, inserted.getBoolean("status"));
+    assertEquals("A brand new todo", inserted.getString("body"));
+    assertEquals("homework", inserted.getString("category"));
+  }
+
+  @Test
+  void addNewTodoRejectsEmptyOwner() throws IOException {
+    @SuppressWarnings("unchecked")
+    BodyValidator<Todo> validator = (BodyValidator<Todo>) mock(BodyValidator.class);
+
+    when(ctx.body()).thenReturn("{\"owner\":\"\",\"status\":false,\"body\":\"x\",\"category\":\"homework\"}");
+    when(ctx.bodyValidator(Todo.class)).thenReturn(validator);
+
+    when(validator.check(any(), anyString()))
+    .thenThrow(new BadRequestResponse("Owner is required"));
+
+    try {
+      todoController.addNewTodo(ctx);
+    } catch (BadRequestResponse ignored) {
+  }
+  }
+  @Test
+    void getTodosWithContainsFiltersByBody() throws IOException {
+      when(ctx.queryParamMap()).thenReturn(Map.of("contains", List.of("incididunt")));
+      when(ctx.queryParam("contains")).thenReturn("incididunt");
+
+      todoController.getTodos(ctx);
+
+      verify(ctx).json(todoArrayListCaptor.capture());
+      verify(ctx).status(HttpStatus.OK);
+
+
+      assertEquals(4, todoArrayListCaptor.getValue().size()); // adjust if needed
+  }
+  @Test
+  void getTodosWithInvalidSortByThrowsError() throws IOException {
+      when(ctx.queryParamMap()).thenReturn(Collections.emptyMap());
+      when(ctx.queryParam("sortby")).thenReturn("notAField");
+
+      BadRequestResponse exception = assertThrows(BadRequestResponse.class,
+      () -> todoController.getTodos(ctx));
+
+      assertEquals("Invalid sortby field.", exception.getMessage());
+  }
+  @Test
+    void getTodosWithInvalidSortOrderThrowsError() throws IOException {
+      when(ctx.queryParamMap()).thenReturn(Collections.emptyMap());
+      when(ctx.queryParam("sortby")).thenReturn("owner");
+      when(ctx.queryParam("sortorder")).thenReturn("sideways");
+
+      BadRequestResponse exception = assertThrows(BadRequestResponse.class,
+    () -> todoController.getTodos(ctx));
+
+      assertEquals("sortorder must be 'asc' or 'desc'", exception.getMessage());
+}
 }
 
