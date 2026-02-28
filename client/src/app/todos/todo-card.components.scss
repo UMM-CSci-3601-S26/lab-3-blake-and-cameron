@@ -1,22 +1,59 @@
-// This sets the font size to be the same for both the Angular Material
-// list item title and list item line.
-.mat-mdc-list-item {
-  &-title,
-  &-line {
-    font-size: 1rem;
-  }
+:host {
+  display: block;
 }
 
-// Capitalize the todo owner when displaying it in the todo card.
+:host.todo-card {
+  display: block;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+:host.todo-card mat-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 18px;
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+:host.todo-card mat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 45px rgba(0,0,0,0.55);
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
 .todo-card-owner {
-  text-transform: capitalize;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.todo-card-category {
+  margin-top: 2px;
+  font-weight: 700;
+  color: rgba(34, 211, 238, 0.95);
 }
 
 .todo-card-body {
-  display: block; /* Make it a block-level element */
-  color: inherit; /* Inherit the text color from the parent element */
-  text-decoration: none; /* Remove default underline */
-  padding: 0; /* Reset padding */
-  margin: 0; /* Reset margin */
-  cursor: pointer; /* Change cursor to pointer on hover */
+  margin-top: 8px;
+  color: rgba(226, 232, 240, 0.92);
+  line-height: 1.4;
+}
+
+.todo-card-status {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.status-complete {
+  background: rgba(34, 197, 94, 0.18);
+  color: rgba(34, 197, 94, 0.95);
+}
+
+.status-incomplete {
+  background: rgba(249, 115, 22, 0.18);
+  color: rgba(249, 115, 22, 0.95);
 }

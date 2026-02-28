@@ -21,7 +21,9 @@
           <mat-list-item>
             <mat-icon matListItemIcon>schedule</mat-icon>
             <p matListItemTitle>Status</p>
-            <p matListItemLine class="todo-card-status">{{ todo().status ? 'Completed' : 'Incomplete' }}</p>
+            <span class="todo-card-status" [ngClass]="todo().status ? 'status-complete' : 'status-incomplete'">
+              {{ todo().status ? 'Completed' : 'Incomplete' }}
+            </span>
           </mat-list-item>
 
           <mat-divider [inset]=true></mat-divider>

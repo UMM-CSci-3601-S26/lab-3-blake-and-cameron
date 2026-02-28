@@ -1,4 +1,5 @@
 import { Component, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,7 +12,7 @@ import { Todo } from './todo';
   standalone: true,
   templateUrl: './todo-card.components.html',
   styleUrls: ['./todo-card.components.scss'],
-  imports: [MatCardModule, MatButtonModule, MatListModule, MatIconModule, RouterLink]
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatListModule, MatIconModule, RouterLink]
 })
 export class TodoCardComponent {
 
