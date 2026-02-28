@@ -70,25 +70,30 @@ describe('TodoListComponent sorting', () => {
     expect(owners).toEqual(['Dawn', 'Barry', 'Alice']);
   });
 
-  it('applies owner filter before sorting', () => {
+  it('requests server filtering by owner and sorting by category asc', () => {
     const todos: Todo[] = [
       { _id: '1', owner: 'Blanche', status: true, body: 'x', category: 'software design' },
       { _id: '2', owner: 'Barry', status: false, body: 'y', category: 'groceries' },
       { _id: '3', owner: 'Blanche', status: false, body: 'z', category: 'homework' },
     ];
+
     todoService.getTodos.and.returnValue(of(todos));
 
     const fixture = TestBed.createComponent(TodoListComponent);
     const component = fixture.componentInstance;
 
-    fixture.detectChanges();
-
     component.todoOwner.set('blan');
     component.todoSortBy.set('category');
     component.todoSortOrder.set('asc');
 
-    const result = component.filteredTodos();
-    expect(result.length).toBe(2);
-    expect(result.map(t => t.category)).toEqual(['homework', 'software design']);
+    fixture.detectChanges();
+
+    expect(todoService.getTodos).toHaveBeenCalled();
+
+    const lastCallArgs = todoService.getTodos.calls.mostRecent().args[0];
+
+    expect(lastCallArgs.owner).toBe('blan');
+    expect(lastCallArgs.sortBy).toBe('category');
+    expect(lastCallArgs.sortOrder).toBe('asc');
   });
 });
