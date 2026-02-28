@@ -12,6 +12,8 @@ export class TodoListPage {
   private readonly statusSelectSelector = '[data-test=todoStatusSelect]';
   private readonly bodyInputSelector = '[data-test=todoBodyInput]';
   private readonly categorySelectSelector = '[data-test=todoCategorySelect]';
+  private readonly sortBySelectSelector = '[data-test=todoSortBySelect]';
+  private readonly sortOrderSelectSelector = '[data-test=todoSortOrderSelect]';
   private readonly dropdownOptionSelector = 'mat-option';
 
   navigateTo() {
@@ -63,6 +65,15 @@ export class TodoListPage {
     return cy.get(`${this.dropdownOptionSelector}[value="${value}"]`).click();
   }
 
+  selectSortBy(value: 'owner' | 'status' | 'body' | 'category') {
+    cy.get(this.sortBySelectSelector).click();
+    return cy.get('mat-option').contains(value).click();
+  }
+
+  selectSortOrder(value: 'asc' | 'desc') {
+    cy.get(this.sortOrderSelectSelector).click();
+    return cy.get('mat-option').contains(value).click();
+  }
   clickViewTodo(card: Cypress.Chainable<JQuery<HTMLElement>>) {
     return card.find(this.viewTodoButtonSelector).click();
   }

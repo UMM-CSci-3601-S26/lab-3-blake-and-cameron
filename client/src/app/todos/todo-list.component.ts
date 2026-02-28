@@ -53,6 +53,8 @@ export class TodoListComponent {
   todoStatus = signal<boolean | undefined>(undefined);
   todoBody = signal<string | undefined>(undefined);
   todoLimit = signal<number | undefined>(undefined);
+  todoSortBy = signal<'owner' | 'status' | 'body' | 'category' | undefined>(undefined);
+  todoSortOrder = signal<'asc' | 'desc' | undefined>(undefined);
 
   viewType = signal<'card' | 'list'>('card');
 
@@ -62,15 +64,21 @@ export class TodoListComponent {
   private todoStatus$ = toObservable(this.todoStatus);
   private todoLimit$ = toObservable(this.todoLimit);
   private todoBody$ = toObservable(this.todoBody);
+  private todoSortBy$ = toObservable(this.todoSortBy);
+  private todoSortOrder$ = toObservable(this.todoSortOrder);
+  private todoOwner$ = toObservable(this.todoOwner);
 
   serverFilteredTodos = toSignal(
-    combineLatest([this.todoCategory$, this.todoStatus$, this.todoLimit$, this.todoBody$]).pipe(
-      switchMap(([category, status, limit, body]) =>
+    combineLatest([this.todoCategory$, this.todoStatus$, this.todoLimit$, this.todoBody$, this.todoSortBy$, this.todoSortOrder$, this.todoOwner$]).pipe(
+      switchMap(([category, status, limit, body, sortBy, sortOrder, owner]) =>
         this.todoService.getTodos({
           category,
           status,
           limit,
-          body
+          body,
+          sortBy,
+          sortOrder,
+          owner
         })
       ),
 
@@ -96,6 +104,20 @@ export class TodoListComponent {
   filteredTodos = computed(() => {
     const serverFilteredTodos = this.serverFilteredTodos();
 
-    return this.todoService.filterTodo(serverFilteredTodos, {owner: this.todoOwner()});
+    const sortBy = this.todoSortBy();
+    const sortOrder = this.todoSortOrder() ?? 'asc';
+
+    if (!sortBy) {
+      return serverFilteredTodos;
+    }
+
+    const sortedTodos = [...serverFilteredTodos].sort((a, b) => {
+      const aValue = String(a[sortBy]).toLowerCase();
+      const bValue = String(b[sortBy]).toLowerCase();
+
+      return aValue.localeCompare(bValue)
+    });
+
+    return sortOrder === 'desc' ? sortedTodos.reverse() : sortedTodos;
   });
 }
