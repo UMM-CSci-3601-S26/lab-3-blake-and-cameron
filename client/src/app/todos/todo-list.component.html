@@ -1,0 +1,149 @@
+<div class="flex-row">
+  <div class="flex-1">
+
+    <mat-card class="search-card">
+      <mat-card-header>
+        <mat-card-title class=" todo-list-title">todo</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+
+        <div class="flex-row gap-8 flex-wrap">
+          <!-- Examples of filtering in Angular -->
+
+          <mat-form-field class="input-field">
+            <mat-label>Owner</mat-label>
+            <!-- As opposed to the RXJS version `[ngModel]="userName$ | async" (ngModelChange)="userName$.next($event)" -->
+            <!-- Signals are their own getter and setter if left uninvoked like that -->
+            <!-- The [()] syntax is saying 'Do both the getting and setting with the respective get/set of the signal' -->
+            <input matInput data-test="todoOwnerInput" placeholder="Filter by owner" [(ngModel)]="todoOwner">
+            <mat-hint>Filtered on client</mat-hint>
+          </mat-form-field>
+
+        </div>
+
+        <div class="flex-row gap-8 flex-wrap">
+          <!-- Examples of filtering on the server -->
+
+          <mat-form-field class="input-field">
+            <mat-label>Limit</mat-label>
+            <input matInput data-test="todoLimitInput" type="number" placeholder="Filter by limit" min="0" max="200"
+              [(ngModel)]="todoLimit">
+            <mat-hint>Filtered on server</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Status</mat-label>
+            <mat-select [(ngModel)]="todoStatus" data-test="todoStatusSelect">
+              <mat-option [value]="undefined"> -- </mat-option>
+              <mat-option [value]="true">Completed</mat-option>
+              <mat-option [value]="false">Incomplete</mat-option>
+            </mat-select>
+            <mat-hint>Filtered on server</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Body</mat-label>
+            <input matInput data-test="todoBodyInput" placeholder="Filter by body" [(ngModel)]="todoBody">
+            <mat-hint>Filtered on server</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Category</mat-label>
+            <mat-select [(ngModel)]="todoCategory" data-test="todoCategorySelect">
+              <mat-option [value]="undefined">--</mat-option>
+              <mat-option value="video games">video games</mat-option>
+              <mat-option value="software design">software design</mat-option>
+              <mat-option value="homework">homework</mat-option>
+              <mat-option value="groceries">groceries</mat-option>
+            </mat-select>
+            <mat-hint>Filtered on server</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Sort By</mat-label>
+            <mat-select [(ngModel)]="todoSortBy" data-test="todoSortBySelect">
+              <mat-option [value]="undefined">--</mat-option>
+              <mat-option value="owner">owner</mat-option>
+              <mat-option value="status">status</mat-option>
+              <mat-option value="body">body</mat-option>
+              <mat-option value="category">category</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Sort Order</mat-label>
+              <mat-select [(ngModel)]="todoSortOrder" data-test="todoSortOrderSelect">
+                <mat-option [value]="undefined">--</mat-option>
+                <mat-option value="asc">asc</mat-option>
+                <mat-option value="desc">desc</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <br>
+        <div class="flex-row gap-8 flex-wrap">
+          <label for="viewType">View type: </label>
+          <mat-radio-group aria-label="View type" [(ngModel)]="viewType" data-test="viewTypeRadio">
+            <mat-radio-button value="card">Card</mat-radio-button>
+            <mat-radio-button value="list">List</mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div class="flex-row">
+  @if (serverFilteredTodos()) {
+  <div class="flex-1">
+    <!-- Switch between card and list view based on the viewType variable, set above in the mar-radio-group -->
+    <div>
+      @switch (viewType()) {
+      <!-- Card grid view -->
+      @case ('card') {
+      <div class="todo-cards-container flex-row gap-8 flex-wrap">
+        @for (todo of filteredTodos(); track todo._id) {
+        <app-todo-card [simple]="true" class="todo-card" [todo]="todo"></app-todo-card>
+        }
+      </div>
+      }
+      <!-- List view -->
+      @case ('list') {
+      <mat-card>
+        <mat-card-content>
+          <mat-nav-list class="todo-nav-list">
+            <h3 mat-subheader>Todos</h3>
+            @for (todo of filteredTodos(); track todo._id) {
+              <a mat-list-item class="todo-list-item"data-test="todoListItem" [routerLink]="['/todos', todo._id]">
+                <span matListItemTitle> {{ todo.owner }} {{ todo.category }}  </span>
+                <span matListItemLine> {{ todo.body }}</span>
+              </a>
+            }
+          </mat-nav-list>
+        </mat-card-content>
+      </mat-card>
+      }
+      }
+    </div>
+  </div>
+  } @else {
+  <div class="flex-1" class="todo-error">
+    <mat-error>
+      There was a problem loading the todos. Possibly the server is down or perhaps there are network
+      issues.
+    </mat-error>
+    <mat-error>
+      Please wait a bit and try again or start the server.
+    </mat-error>
+  </div>
+  }
+
+  <!-- Maybe this should be a pop-up instead of just a text message? Not sure. -->
+
+</div>
+
+<button mat-fab class="add-todo-fab" matTooltip="Add Todo" matTooltipPosition="left" routerLink="/todos/new"
+  data-test="addTodoButton">
+  <mat-icon class="md-24" aria-label="Add Todo">add</mat-icon>
+</button>

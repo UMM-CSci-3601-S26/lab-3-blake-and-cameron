@@ -1,0 +1,77 @@
+<div class="flex-row">
+  <div class="flex-1">
+    <form [formGroup]="addTodoForm" (ngSubmit)="submitForm();">
+      <mat-card class="add-todo-card">
+        <mat-card-header>
+          <mat-card-title class="add-todo-title">New Todo</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="flex-col">
+
+            <mat-form-field>
+              <mat-label>Owner</mat-label>
+              <input matInput formControlName="owner" required>
+              @if (formControlHasError('owner')) {
+                <mat-error data-test="ownerError">
+                  {{ getErrorMessage('owner') }}
+                </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Status</mat-label>
+              <mat-select required formControlName="status">
+                <mat-option [value]="true">Completed</mat-option>
+                <mat-option [value]="false">Incomplete</mat-option>
+              </mat-select>
+              @if (formControlHasError('status')) {
+                <mat-error data-test="statusError">
+                  {{ getErrorMessage('status') }}
+                </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Category</mat-label>
+              <mat-select required formControlName="category">
+                <mat-option value="video games">video games</mat-option>
+                <mat-option value="software design">software design</mat-option>
+                <mat-option value="homework">homework</mat-option>
+                <mat-option value="groceries">groceries</mat-option>
+              </mat-select>
+              @if (formControlHasError('category')) {
+                <mat-error data-test="categoryError">
+                  {{ getErrorMessage('category') }}
+                </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Body</mat-label>
+              <textarea matInput rows="4" formControlName="body" required></textarea>
+              @if (formControlHasError('body')) {
+                <mat-error data-test="bodyError">
+                  {{ getErrorMessage('body') }}
+                </mat-error>
+              }
+            </mat-form-field>
+
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+          <button
+            mat-button
+            color="primary"
+            [disabled]="!addTodoForm.valid"
+            type="submit"
+            data-test="confirmAddTodoButton">
+            ADD TODO
+          </button>
+        </mat-card-actions>
+
+      </mat-card>
+    </form>
+  </div>
+</div>

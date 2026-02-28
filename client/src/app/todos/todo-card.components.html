@@ -1,0 +1,45 @@
+@if (todo()) {
+  <mat-card class="todo-card">
+    <mat-card-header>
+
+      <mat-card-title class="todo-card-owner">{{ todo().owner }}</mat-card-title>
+      <mat-card-subtitle class="todo-card-category">{{ todo().category }}</mat-card-subtitle>
+    </mat-card-header>
+    @if (!simple()) {
+      <mat-card-content>
+        <mat-list>
+          <mat-list-item>
+            <mat-icon matListItemIcon>dataset</mat-icon>
+            <p matListItemTitle>Owner</p>
+            <!--
+            We had to put both the `role` and `age` entries on a single line. Otherwise
+            we got an annoying leading space in front of the values.
+            -->
+            <p matListItemLine class="todo-card-owner">{{ todo().owner }}</p>
+          </mat-list-item>
+          <mat-divider [inset]=true></mat-divider>
+          <mat-list-item>
+            <mat-icon matListItemIcon>schedule</mat-icon>
+            <p matListItemTitle>Status</p>
+            <span class="todo-card-status" [ngClass]="todo().status ? 'status-complete' : 'status-incomplete'">
+              {{ todo().status ? 'Completed' : 'Incomplete' }}
+            </span>
+          </mat-list-item>
+
+          <mat-divider [inset]=true></mat-divider>
+
+          <mat-list-item>
+            <mat-icon matListItemIcon>notes</mat-icon>
+            <p matListItemTitle>Body</p>
+            <p matListItemLine class="todo-card-body">{{ todo().body }}</p>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    }
+    @if (simple()) {
+      <mat-card-actions>
+        <a mat-button data-test="viewProfileButton" [routerLink]="['/todos', todo()._id]">View Todo</a>
+      </mat-card-actions>
+    }
+  </mat-card>
+}
