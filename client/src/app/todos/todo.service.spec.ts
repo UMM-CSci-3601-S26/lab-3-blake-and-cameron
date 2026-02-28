@@ -151,4 +151,15 @@ describe('TodoService', () => {
       });
     }));
   });
+  it('adds sortBy and sortOrder params', () => {
+    const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
+
+    todoService.getTodos({ sortBy: 'owner', sortOrder: 'desc' }).subscribe(() => {
+      const [, options] = mockedMethod.calls.argsFor(0);
+      const calledParams = options.params as HttpParams;
+
+      expect(calledParams.get('sortBy')).toEqual('owner');
+      expect(calledParams.get('sortOrder')).toEqual('desc');
+    });
+  });
 });

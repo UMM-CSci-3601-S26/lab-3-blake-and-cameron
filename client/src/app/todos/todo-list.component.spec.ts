@@ -5,9 +5,11 @@ import { provideRouter } from '@angular/router';
 import { TodoListComponent } from './todo-list.component';
 import { TodoService } from './todo.service';
 import { Todo } from './todo';
+import { throwError } from 'rxjs';
 
 describe('TodoListComponent sorting', () => {
   let todoService: jasmine.SpyObj<TodoService>;
+  let snackBar: jasmine.SpyObj<MatSnackBar>;
 
   const makeTodos = (): Todo[] => ([
     { _id: '1', owner: 'Barry', status: false, body: 'b', category: 'homework' },
@@ -17,6 +19,7 @@ describe('TodoListComponent sorting', () => {
 
   beforeEach(async () => {
     todoService = jasmine.createSpyObj<TodoService>('TodoService', ['getTodos', 'filterTodo']);
+    snackBar = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
 
     // filterTodo is used by filteredTodos() for the owner filter
     todoService.filterTodo.and.callFake((todos: Todo[], filters: { owner?: string }) => {
@@ -29,7 +32,7 @@ describe('TodoListComponent sorting', () => {
       imports: [TodoListComponent],
       providers: [
         { provide: TodoService, useValue: todoService },
-        { provide: MatSnackBar, useValue: { open: () => {} } },
+        { provide: MatSnackBar, useValue: snackBar },
         provideRouter([])
       ],
     }).compileComponents();
@@ -95,5 +98,46 @@ describe('TodoListComponent sorting', () => {
     expect(lastCallArgs.owner).toBe('blan');
     expect(lastCallArgs.sortBy).toBe('category');
     expect(lastCallArgs.sortOrder).toBe('asc');
+  });
+  it('returns unsorted results when sortBy is undefined', () => {
+    todoService.getTodos.and.returnValue(of([
+      { _id: '1', owner: 'B', status: false, body: 'b', category: 'homework' },
+      { _id: '2', owner: 'A', status: true, body: 'a', category: 'groceries' },
+    ]));
+
+    const fixture = TestBed.createComponent(TodoListComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    component.todoSortBy.set(undefined);
+    const owners = component.filteredTodos().map(t => t.owner);
+
+    expect(owners).toEqual(['B', 'A']);
+  });
+  it('shows snackbar and returns empty list when server errors', () => {
+    todoService.getTodos.and.returnValue(throwError(() => ({ status: 500, message: 'fail', error: {} })));
+
+    const fixture = TestBed.createComponent(TodoListComponent);
+    const component = fixture.componentInstance;
+
+    fixture.detectChanges();
+
+    expect(snackBar.open).toHaveBeenCalled();
+    expect(component.serverFilteredTodos()).toEqual([]);
+  });
+  it('defaults sortOrder to asc when undefined', () => {
+    todoService.getTodos.and.returnValue(of([
+      { _id: '1', owner: 'B', status: false, body: 'b', category: 'homework' },
+      { _id: '2', owner: 'A', status: true, body: 'a', category: 'groceries' },
+    ]));
+
+    const fixture = TestBed.createComponent(TodoListComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    component.todoSortBy.set('owner');
+    component.todoSortOrder.set(undefined); // hit the ?? 'asc' branch
+
+    expect(component.filteredTodos().map(t => t.owner)).toEqual(['A', 'B']);
   });
 });
